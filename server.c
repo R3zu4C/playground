@@ -131,13 +131,6 @@ void child_process(int connection_fd)
 		memset(msg, 0, MAXLINE); // clears contents of msg
 		buf_length = recv(connection_fd, buf, MAXLINE, 0);
 
-		if (strcmp(buf, CLIENT_TERMINATED) == 0)
-		{
-			printf(CLIENT_TERMINATED);
-			close(connection_fd);
-			EXIT_PROCESS;
-		}
-
 		if (buf_length < 0)
 		{
 			sprintf(msg, ERR_READ_BUF);
@@ -145,31 +138,42 @@ void child_process(int connection_fd)
 			close(connection_fd);
 			EXIT_PROCESS;
 		}
-		token = strtok(buf, " ");
-        token_idx++;
 
+		if (strcmp(buf, CLIENT_TERMINATED) == 0)
+		{
+			printf(CLIENT_TERMINATED);
+			close(connection_fd);
+			EXIT_PROCESS;
+		}
+		token = strtok(buf, " ");
+        
+        if(!token) continue;
 		req_type = atoi(token); // tokenising request type from command
 
 		while (token != NULL)
 		{
+            // fputs("here-3\n", stderr);
 			token = strtok(NULL, " ");
             
-			if (token_idx == 1) {
+			if (token_idx == 0) {
 				item_upc = atoi(token);
             }
-			if (token_idx == 2) {
+			if (token_idx == 1) {
 				item_qty = atoi(token);
             }
 
 			token_idx++;
 		}
+        // printf("%d\n", req_type);
+        // printf("%d\n", token_idx);
 
-        if(req_type != 0 && req_type != 1) {
-            sprintf(msg, ERR_PROTOCOL);
-            send(connection_fd, msg, MAXLINE, 0);
-        }
+        // if(req_type != 0 && req_type != 1) {
+        //     sprintf(msg, ERR_PROTOCOL);
+        //     send(connection_fd, msg, MAXLINE, 0);
+        // }
 
-		if (token_idx == 4)
+        // fputs("here-4\n", stderr);
+		if (token_idx >= 2)
 		{
 			if (req_type == 0)
 			{
