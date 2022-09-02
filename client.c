@@ -55,13 +55,11 @@ int main(int argc, char *argv[])
     {
         char request[SIZE_MAX],response[SIZE_MAX];
         printf("\nRequest message format:\n<Request_Type> <UPC Code> <Number>\n");
-        fgets(request, SIZE_MAX, stdin);
+        scanf("%[^\n]%*c", request);
         //fgets(request,SIZE_MAX,stdin);
         send(socket_id,request,SIZE_MAX,0);
         recv(socket_id,response,SIZE_MAX,0);
 
-        printf("aasadaa: %s", request);
-        printf("aaaa: %s", response);
 
         if(response[0]=='0')
         {
